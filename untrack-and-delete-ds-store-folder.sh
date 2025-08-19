@@ -6,24 +6,32 @@ if [ ! -d .git ]; then
     exit 1
 fi
 
-# Find and untrack all .DS_Store files and directories
-echo "Untracking .DS_Store files and directories..."
-git rm -r --cached $(find . -name ".DS_Store" -print)
+# Find all .DS_Store files and directories
+ds_store_files=$(find . -name ".DS_Store")
 
-# Delete the .DS_Store files and directories
-echo "Deleting .DS_Store files and directories..."
-find . -name ".DS_Store" -exec rm -rf {} +
+# Untrack .DS_Store files and directories if they exist
+if [ -n "$ds_store_files" ]; then
+    echo "Untracking .DS_Store files and directories..."
+    git rm -r --cached $ds_store_files
+
+    # Delete the .DS_Store files and directories
+    echo "Deleting .DS_Store files and directories..."
+    find . -name ".DS_Store" -exec rm -rf {} +
+else
+    echo "No .DS_Store files or directories found 👻"
+fi
 
 # Add .DS_Store to .gitignore if it's not already there
 if ! grep -q ".DS_Store" .gitignore; then
     echo ".DS_Store" >> .gitignore
-    echo ".DS_Store added to .gitignore."
+    echo ".DS_Store added to .gitignore 🚫"
 fi
 
-# Stage all the changes to the repository
-git add .
-
-# Commit the changes
-git commit -m "Stop tracking and delete .DS_Store files and directories"
-
-echo "Operation completed ✅"
+# Commit the changes if any .DS_Store files were processed
+if [ -n "$ds_store_files" ]; then
+    git add .
+    git commit -m "Stop tracking and delete .DS_Store files and directories"
+    echo "All .DS_Store files or folder deleted 🗑️"
+else
+    echo "No changes to commit."
+fi
