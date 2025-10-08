@@ -1,5 +1,6 @@
 package example.billingjob;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 
+@Slf4j
 @SpringBootTest
 @ExtendWith(OutputCaptureExtension.class)
 class BillingJobApplicationTests {
@@ -31,7 +33,7 @@ class BillingJobApplicationTests {
         JobExecution jobExecution = this.jobLauncher.run(this.job, jobParameters);
 
         // then
-        Assertions.assertTrue(output.getOut().contains("processing billing information some/input/file"));
+        Assertions.assertTrue(output.getOut().contains("processing billing information from file some/input/file"));
         Assertions.assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
     }
 
